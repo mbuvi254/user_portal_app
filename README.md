@@ -30,5 +30,13 @@ npm i cors
 npm i -D @types/cors
 ```
 
+```bash
+  
+npm install jsonwebtoken
+npm install --save-dev @types/jsonwebtoken
+```
 
+```bash
+npm install --save-dev @types/cors
+``
 
