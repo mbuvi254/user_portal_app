@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import express, {} from "express";
 const client = new PrismaClient();
+// Password Hash helper function
 async function hashPassword(plainPassword) {
     const hashedPassword = await bcrypt.hash(plainPassword, 12);
     return hashedPassword;
@@ -42,5 +43,28 @@ export const getAllUsers = async (req, res) => {
         console.error("Error occured during fetching users:", error);
         return res.status(500).json({ message: "Something Went Wrong" });
     }
+};
+export const getUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = Number(id);
+        if (isNaN(userId)) {
+            return res.status(400).json({ message: "Invalid user ID" });
+        }
+        const user = await client.user.findUnique({
+            where: { id: userId },
+            // include :{tasks:true} 
+        });
+        if (!user) {
+            console.log("No user found");
+            return res.status(404).json("User not Found");
+        }
+        return res.status(200).json(user);
+    }
+    catch (error) {
+        console.error("Database Error:", error);
+        return res.status(500).json({ message: "Something Went Wrong" });
+    }
+    ;
 };
 //# sourceMappingURL=users.js.map

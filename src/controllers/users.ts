@@ -6,12 +6,14 @@ import express, { type Request, type Response } from "express";
 const client = new PrismaClient()
 
 
-
+// Password Hash helper function
 async function hashPassword(plainPassword :string) {
   const hashedPassword = await bcrypt.hash(plainPassword, 12);
   return hashedPassword
 
 }
+
+//Verify
 
 export const registerUser = async (req:Request, res:Response)=>{
     try{
@@ -46,6 +48,8 @@ export const registerUser = async (req:Request, res:Response)=>{
    
 }
 
+
+
 export  const getAllUsers = async (req:Request,res:Response)=>{
     try{
         const users = await client.user.findMany();
@@ -55,5 +59,38 @@ export  const getAllUsers = async (req:Request,res:Response)=>{
         console.error("Error occured during fetching users:",error)
         return res.status(500).json({ message:"Something Went Wrong" });
     
+    }
+}
+
+export const getUser = async (req:Request,res:Response)=>{
+    try{
+        const {id} =req.params;
+
+        const userId = Number(id);
+        if(isNaN(userId)){
+             return res.status(400).json({ message: "Invalid user ID" });
+         
+        }
+        const user = await client.user.findUnique({
+            where :{ id : userId},
+            // include :{tasks:true} 
+        });
+        if(!user){
+            console.log("No user found");
+            return res.status(404).json("User not Found")
+        }
+        return res.status(200).json(user);
+    }catch(error){
+        console.error("Database Error:",error);
+        return res.status(500).json({message:"Something Went Wrong"})
+    };
+}
+
+export const loginUser = async (req:Request,res:Response)=>{
+    try{
+
+    }catch(error){
+        console.error("Login Failed:",error);
+        return res.status(500).json({message:"Something went wrong"});
     }
 }

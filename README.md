@@ -1,24 +1,6 @@
-#USER PORTAL APP
+# USER PORTAL APP
 
-
-```bash
-Simplyfy tsconfig.json
-{
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "outDir": "dist"
-  },
-  "include": ["src"]
-}
-```
-
-
+-For Login
 ```bash
   npm i bcryptjs
 
@@ -40,6 +22,12 @@ node dist/app.js
 
 ```bash
 npx ts-node-dev src/app.ts
+```
+
+Enable CORS (useful when testing with frontend or Postman)
+```bash
+npm i cors
+npm i -D @types/cors
 ```
 
 

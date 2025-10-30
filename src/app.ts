@@ -1,5 +1,5 @@
 import express, {type Express } from  "express"
-import { getAllUsers,registerUser } from "./controllers/users.js"
+import { getAllUsers,getUser,registerUser } from "./controllers/users.js"
 
 const app : Express = express();
 
@@ -9,6 +9,7 @@ app.use(express.json());
 // Routes
 app.get("/users",getAllUsers)
 app.post("/users",registerUser)
+app.get("/users/:id",getUser)
 
 
 
