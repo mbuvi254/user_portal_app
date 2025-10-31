@@ -33,13 +33,13 @@ async function comparePassword(password:string,dbPassword:string) {
 
 
 
-async function generateToken(id:Number,username :string) {
+function generateToken(id:Number,username :string) {
+    const payload = {id,username};
     try{
-        const payload = {id,username};
-        const token = jwt.sign(payload, "MYSECRETKEY", { expiresIn: 50000});
-        return token
+       return jwt.sign(payload, "MYSECRETKEY", { expiresIn: 50000}); 
     }catch(error){
-      console.log(error)    
+      console.log(`JWT Sign Error: ${error}`);
+      return null    
     }
 };
 
@@ -57,13 +57,14 @@ export const registerUser = async (req:Request, res:Response)=>{
         
         const existingUser = await client.user.findUnique({ where: { email } });
         if (existingUser) {
+            console.log("User already registered");
         return res.status(400).json({ message: "User already registered" });
         }
 
         const hashedPassword = await hashPassword(password)
     
         const newUser = await client.user.create({data : {username,firstName,lastName,email,password:hashedPassword},});
-        console.log(`User registed ${newUser}`)
+        console.log(`User registed ${newUser.username}`)
         return res.status(201).json({
             message: "User Registered Successfully",
             user: newUser
@@ -139,7 +140,11 @@ export const loginUser = async (req:Request,res:Response)=>{
         const validityPassword = await comparePassword(password,dbPassword);
         if(validityPassword){
             const accessToken  =generateToken(user.id,user.username)
-            return res.status(200).json({message:"Well ! Your Password worked",accessKey:accessToken});
+            if(!accessToken){
+                return res.status(500).json({message:"Token generation failed"});
+            }
+            console.log("Login Successful",accessToken);
+            return res.status(200).json({message:"Well ! Your Password worked",accessToken});
         }else{
             return res.status(500).json("Whoops! Your Password did not worked");
         }
